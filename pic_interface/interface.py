@@ -2,7 +2,6 @@ import serial
 import json
 import re
 
-from serial.serialutil import PortNotOpenError
 
 serial_port = None
 first = 0
@@ -25,11 +24,6 @@ def print_serial():
 def receive_data_from_exp():
     global serial_port
     global first 
-    pic_message = serial_port.read_until(b'\r')
-    pic_message = pic_message.decode(encoding='ascii')
-    print("MENSAGEM DO Arduino:\n")
-    print(pic_message)
-    print("\-------- --------/\n")
     if first == 0:
         first =1
         print("ENCONTREI INFO\nEXPERIENCIA COMECOU")
@@ -38,6 +32,11 @@ def receive_data_from_exp():
         print("ENCONTREI INFO\nEXPERIENCIA ACABOU")
         return "DATA_END"
     else:
+        pic_message = serial_port.read_until(b'\r')
+        pic_message = pic_message.decode(encoding='ascii')
+        print("MENSAGEM DO Arduino:\n")
+        print(pic_message)
+        print("\-------- --------/\n")
         #1       3.1911812       9.7769165       21.2292843      25.72
         # print("ENCONTREI INFO\nDADOS NA PORTA")
         # pic_message = pic_message.strip()
