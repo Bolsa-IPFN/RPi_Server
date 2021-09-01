@@ -2,7 +2,15 @@ import serial
 import json
 import re
 
+from serial.serialutil import PortNotOpenError
+
 serial_port = None
+first = 0
+port = None
+baud = 0
+desth_timeout = 0
+
+
 #status, config
 
 def print_serial():
@@ -16,19 +24,28 @@ def print_serial():
 
 def receive_data_from_exp():
     global serial_port
+    global first 
     pic_message = serial_port.read_until(b'\r')
     pic_message = pic_message.decode(encoding='ascii')
     print("MENSAGEM DO Arduino:\n")
     print(pic_message)
     print("\-------- --------/\n")
-    #1       3.1911812       9.7769165       21.2292843      25.72
-    # print("ENCONTREI INFO\nDADOS NA PORTA")
-    # pic_message = pic_message.strip()
-    # pic_message = pic_message.split("\t")
-    # pic_message = '{"Sample_number":"'+str(pic_message[0])+\
-    #     '","Val1":"'+str(pic_message[1])+'","Val2":"'+str(pic_message[2])+\
-    #     '","Val3":"'+str(pic_message[3])+'","Val4":"'+str(pic_message[4])+'"}'
-    return pic_message
+    if first == 0:
+        first =1
+        print("ENCONTREI INFO\nEXPERIENCIA COMECOU")
+        return "DATA_START"
+    elif first == 2:
+        print("ENCONTREI INFO\nEXPERIENCIA ACABOU")
+        return "DATA_END"
+    else:
+        #1       3.1911812       9.7769165       21.2292843      25.72
+        # print("ENCONTREI INFO\nDADOS NA PORTA")
+        # pic_message = pic_message.strip()
+        # pic_message = pic_message.split("\t")
+        # pic_message = '{"Sample_number":"'+str(pic_message[0])+\
+        #     '","Val1":"'+str(pic_message[1])+'","Val2":"'+str(pic_message[2])+\
+        #     '","Val3":"'+str(pic_message[3])+'","Val4":"'+str(pic_message[4])+'"}'
+        return pic_message
     
 #ALGURES AQUI HA BUG QUANDO NAO ESTA EM NENHUMA DAS PORTAS
 def try_to_lock_experiment(config_json, serial_port):
@@ -70,6 +87,9 @@ def try_to_lock_experiment(config_json, serial_port):
 #e escrever detalhes no log do sistema
 def do_init(config_json):
     global serial_port
+    global port
+    global baud
+    global desth_timeout
 
     if 'serial_port' in config_json:
         for exp_port in config_json['serial_port']['ports_restrict']:
@@ -78,6 +98,9 @@ def do_init(config_json):
                 #alterar esta função para aceitar mais definições do json
                 #é preciso uma função para mapear os valores para as constantes da porta série
                 #e.g. - 8 bits de data -> serial.EIGHTBITS; 1 stopbit -> serial.STOPBITS_ONE
+                port = exp_port
+                baud = int(config_json['serial_port']['baud'])
+                desth_timeout = int(config_json['serial_port']['death_timeout'])
                 serial_port = serial.Serial(port = exp_port,\
                                                     baudrate=int(config_json['serial_port']['baud']),\
                                                     timeout = int(config_json['serial_port']['death_timeout']))
@@ -108,16 +131,22 @@ def do_init(config_json):
 def do_config(config_json) :
     global serial_port
     Arduino_message =  "Do not need config"
+    do_stop()
     return Arduino_message, True
 
 def do_start() :
     global serial_port
+    global first
+    global port
+    global baud
+    global desth_timeout
+    first = 0
     if serial_port.is_open :
         pass
     else:
-        serial_port = serial.Serial(port = config_json['serial_port']['ports_restrict'],\
-                                                    baudrate=int(config_json['serial_port']['baud']),\
-                                                    timeout = int(config_json['serial_port']['death_timeout']))
+        serial_port = serial.Serial(port = port,\
+                                    baudrate=baud,\
+                                    timeout = desth_timeout)
     return True
         #elif "STOPED" or "CONFIGURED" or "RESETED" in pic_message.decode(encoding='ascii') :
         #    return False
@@ -127,6 +156,9 @@ def do_start() :
 
 def do_stop() :
     global serial_port
+    global first
+
+    first = 2 
 
     if serial_port.is_open :
         serial_port.close()

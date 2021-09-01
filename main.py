@@ -29,7 +29,8 @@ def send_exp_data():
     send(send_message)
     while True:
         exp_data = interface.receive_data_from_exp()
-        print(exp_data)
+        # print("Exp_data: ")
+        # print(exp_data)
         if exp_data != "DATA_END":
             SAVE_DATA.append('{"timestamp":"'+str(time.time_ns())+'","Data":'+str(exp_data)+'}')
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"running","Data":'+str(exp_data)+'}'
@@ -37,7 +38,9 @@ def send_exp_data():
         else:
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Ended","Data":""}'
             send(send_message)
-            send_message = '{"msg_id":"7", "results":'+str(SAVE_DATA).replace('\'', '')+'}'
+            # Bug aqui em baixo.
+            send_message = '{"msg_id":"7", "results":'+str(SAVE_DATA).replace('\'', '').replace('\\n', '').replace('\\r', '')+'}'
+            # print(send_message)
             send(send_message)
             return #EXPERIMENT ENDED; END THREAD
 
@@ -234,3 +237,7 @@ if __name__ == "__main__":
                 connected = False
             client.close()
             time.sleep(10)
+
+
+# Arduino_Temp cfg R:5 I:5
+# Arduino_Temp stp
