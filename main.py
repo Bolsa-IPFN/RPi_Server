@@ -35,6 +35,7 @@ def send_exp_data():
             SAVE_DATA.append('{"timestamp":"'+str(time.time_ns())+'","Data":'+str(exp_data)+'}')
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"running","Data":'+str(exp_data)+'}'
             send(send_message)
+            
         else:
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Ended","Data":""}'
             send(send_message)
