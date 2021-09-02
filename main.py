@@ -43,7 +43,9 @@ def send_exp_data():
             send_message = '{"msg_id":"7", "results":'+str(SAVE_DATA).replace('\'', '').replace('\\n', '').replace('\\r', '')+'}'
             print(send_message)
             send(send_message)
-            return #EXPERIMENT ENDED; END THREAD
+            break 
+    print("I'm done")
+    return #EXPERIMENT ENDED; END THREAD
 
 
 def check_reply(myjson):

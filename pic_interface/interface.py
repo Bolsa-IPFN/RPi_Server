@@ -30,6 +30,8 @@ def receive_data_from_exp():
         return "DATA_START"
     elif first == 2:
         print("ENCONTREI INFO\nEXPERIENCIA ACABOU")
+        if serial_port.is_open:
+            serial_port.close()
         return "DATA_END"
     else:
         serial_port.reset_input_buffer()
