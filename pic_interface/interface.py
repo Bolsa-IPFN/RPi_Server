@@ -32,6 +32,7 @@ def receive_data_from_exp():
         print("ENCONTREI INFO\nEXPERIENCIA ACABOU")
         return "DATA_END"
     else:
+        print('isto nao faz sentido mas faço pq nao tnho direito a opinao: '+str(serial_port.is_open)+' == 1')
         pic_message = serial_port.readline()
         pic_message = pic_message.decode(encoding='ascii')
         print("MENSAGEM DO Arduino:\n")
