@@ -146,6 +146,7 @@ def do_start() :
         serial_port = serial.Serial(port = port,\
                                     baudrate=baud,\
                                     timeout = desth_timeout)
+        serial_port.reset_input_buffer()
     return True
         #elif "STOPED" or "CONFIGURED" or "RESETED" in pic_message.decode(encoding='ascii') :
         #    return False
@@ -160,6 +161,7 @@ def do_stop() :
     first = 2 
 
     if serial_port.is_open :
+        serial_port.reset_input_buffer()
         serial_port.close()
     
     return True
