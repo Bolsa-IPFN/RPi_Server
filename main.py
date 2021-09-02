@@ -17,7 +17,7 @@ SERVER = "192.168.43.89"
 ADDR = (SERVER, PORT)
 
 CONFIG_OF_EXP = []
-MY_IP = "192.168.43.14"
+MY_IP = "192.168.56.100"
 SEGREDO = "test_Arduino"
 SAVE_DATA = []
 
@@ -29,19 +29,18 @@ def send_exp_data():
     send(send_message)
     while True:
         exp_data = interface.receive_data_from_exp()
-        # print("Exp_data: ")
-        # print(exp_data)
+        print("Exp_data: ")
+        print(exp_data)
         if exp_data != "DATA_END":
             SAVE_DATA.append('{"timestamp":"'+str(time.time_ns())+'","Data":'+str(exp_data)+'}')
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"running","Data":'+str(exp_data)+'}'
             send(send_message)
-            
         else:
             send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Ended","Data":""}'
             send(send_message)
             # Bug aqui em baixo.
             send_message = '{"msg_id":"7", "results":'+str(SAVE_DATA).replace('\'', '').replace('\\n', '').replace('\\r', '')+'}'
-            # print(send_message)
+            print(send_message)
             send(send_message)
             return #EXPERIMENT ENDED; END THREAD
 
