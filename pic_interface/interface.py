@@ -163,9 +163,9 @@ def do_stop() :
 
     first = 2 
 
-    if serial_port.is_open :
-        # serial_port.reset_input_buffer()
-        serial_port.close()
+    # if serial_port.is_open :
+    #     # serial_port.reset_input_buffer()
+    #     serial_port.close()
     
     return True
         #Aqui não pode ter else: false senão rebenta por tudo e por nada
