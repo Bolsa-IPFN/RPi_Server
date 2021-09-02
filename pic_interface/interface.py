@@ -32,7 +32,7 @@ def receive_data_from_exp():
         print("ENCONTREI INFO\nEXPERIENCIA ACABOU")
         return "DATA_END"
     else:
-        pic_message = serial_port.read_until(b'\r')
+        pic_message = serial_port.readline()
         pic_message = pic_message.decode(encoding='ascii')
         print("MENSAGEM DO Arduino:\n")
         print(pic_message)
