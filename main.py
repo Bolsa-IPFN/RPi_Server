@@ -28,6 +28,7 @@ def send_exp_data():
     send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Starting","Data":""}'
     send(send_message)
     while True:
+        print("Erro esta na interface")
         exp_data = interface.receive_data_from_exp()
         print("Exp_data: ")
         print(exp_data)
