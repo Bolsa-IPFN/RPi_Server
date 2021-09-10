@@ -29,6 +29,8 @@ def send_exp_data(lock):
         pass
     send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Starting","Data":""}'
     time.sleep(0.00001)
+    lock.acquire()
+    lock.release()
     send(send_message)
     while True:
         # print("Erro esta na interface")
