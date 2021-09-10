@@ -21,7 +21,9 @@ MY_IP = "192.168.43.14"
 SEGREDO = "test_Arduino"
 SAVE_DATA = []
 
-def send_exp_data():
+lock = threading.Lock()
+
+def send_exp_data(lock):
     global SAVE_DATA
     while interface.receive_data_from_exp() != "DATA_START":
         pass
@@ -83,6 +85,7 @@ def wait_for_messages():
 
 
 def send(msg):
+    global lock
     try:
         msg = msg.replace('\n','').replace('\r','').replace('::',':')
         message = msg.encode(FORMAT)
@@ -95,19 +98,26 @@ def send(msg):
         #print (send_length)
         #print (message)
         client.sendall(message)
+        try:
+            lock.release()
+            print("consegui dar unlock")
+        except:
+            print("não conseguir dar unlock")
     except socket.error:
         raise socket.error
 
 #erro aqui 
 def Send_Config_to_Pid(myjson):
+    global lock
     print("Recebi mensagem de configurestart. A tentar configurar pic")
     actual_config, config_feita_correcta = interface.do_config(myjson)
     if config_feita_correcta :   #se config feita igual a pedida? (opcional?)
-        data_thread = threading.Thread(target=send_exp_data,daemon=True)
+        data_thread = threading.Thread(target=send_exp_data,args=(lock),daemon=True)
         print("PIC configurado.\n")
         if interface.do_start():                            #tentar começar experiencia
             print("aqui")
             data_thread.start()
+            lock.acquire()
             #O JSON dos config parameters está mal e crasha o server. ARRANJAR
             #send_mensage = '{"reply_id": "2","status":"Experiment Running","config_params":"'+str(myjson["config_params"])+'}'
             send_mensage = '{"reply_id": "2","status":"Experiment Running"}'
