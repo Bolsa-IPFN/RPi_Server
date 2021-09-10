@@ -8,16 +8,16 @@ import time
 
 interface = None
 
-HEADER = 64
+HEADER = 2048
 PORT = 5050
 BINARY_DATA_PORT = 5051
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "192.168.43.89"
+SERVER = "194.210.159.33"
 ADDR = (SERVER, PORT)
 
 CONFIG_OF_EXP = []
-MY_IP = "192.168.56.100"
+MY_IP = "192.168.43.14"
 SEGREDO = "test_Arduino"
 SAVE_DATA = []
 
@@ -26,6 +26,7 @@ def send_exp_data():
     while interface.receive_data_from_exp() != "DATA_START":
         pass
     send_message = '{"msg_id":"11","timestamp":"'+str(time.time_ns())+'","status":"Experiment Starting","Data":""}'
+    time.sleep(0.00001)
     send(send_message)
     while True:
         # print("Erro esta na interface")
@@ -43,6 +44,7 @@ def send_exp_data():
             send_message = '{"msg_id":"7", "results":'+str(SAVE_DATA).replace('\'', '').replace('\\n', '').replace('\\r', '')+'}'
             print(send_message)
             send(send_message)
+            SAVE_DATA = []
             break 
     print("I'm done")
     return #EXPERIMENT ENDED; END THREAD
@@ -82,8 +84,11 @@ def wait_for_messages():
 
 def send(msg):
     try:
+        msg = msg.replace('\n','').replace('\r','').replace('::',':')
         message = msg.encode(FORMAT)
+        print("Mensagem a enviar para o main "+str(message))
         msg_length = len(message)
+        print("Tamanho da mensagem "+str(msg_length))
         send_length = str(msg_length).encode(FORMAT)
         send_length += b' ' * (HEADER - len(send_length))
         client.sendall(send_length)
@@ -103,7 +108,6 @@ def Send_Config_to_Pid(myjson):
         if interface.do_start():                            #tentar começar experiencia
             print("aqui")
             data_thread.start()
-            time.sleep(0.000001)
             #O JSON dos config parameters está mal e crasha o server. ARRANJAR
             #send_mensage = '{"reply_id": "2","status":"Experiment Running","config_params":"'+str(myjson["config_params"])+'}'
             send_mensage = '{"reply_id": "2","status":"Experiment Running"}'

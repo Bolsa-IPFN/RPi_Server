@@ -34,20 +34,21 @@ def receive_data_from_exp():
             serial_port.close()
         return "DATA_END"
     else:
-        serial_port.reset_input_buffer()
-        pic_message = serial_port.readline()
-        pic_message = pic_message.decode(encoding='ascii')
-        print("MENSAGEM DO Arduino:\n")
-        print(pic_message)
-        print("\-------- --------/\n")
-        #1       3.1911812       9.7769165       21.2292843      25.72
-        # print("ENCONTREI INFO\nDADOS NA PORTA")
-        # pic_message = pic_message.strip()
-        # pic_message = pic_message.split("\t")
-        # pic_message = '{"Sample_number":"'+str(pic_message[0])+\
-        #     '","Val1":"'+str(pic_message[1])+'","Val2":"'+str(pic_message[2])+\
-        #     '","Val3":"'+str(pic_message[3])+'","Val4":"'+str(pic_message[4])+'"}'
-        return pic_message
+        while True:
+            try:
+                serial_port.reset_input_buffer()
+                pic_message = serial_port.readline()    
+                json.loads(pic_message)
+                pic_message = pic_message.decode(encoding='ascii')
+                print("MENSAGEM DO Arduino:\n")
+                print(pic_message)
+                print("\-------- --------/\n")
+                break
+            except:
+                print("Ponto deu erro no JSON!!!")
+                pass
+    return pic_message
+
     
 #ALGURES AQUI HA BUG QUANDO NAO ESTA EM NENHUMA DAS PORTAS
 def try_to_lock_experiment(config_json, serial_port):
