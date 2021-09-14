@@ -169,7 +169,7 @@ def action_valv(json):
                                     baudrate=baud,\
                                     timeout = desth_timeout)
     
-    serial_port.write(json)
+    serial_port.write(b''+json)
     
     return True
 
