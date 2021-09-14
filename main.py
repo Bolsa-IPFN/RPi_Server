@@ -216,7 +216,8 @@ def check_msg(myjson):
             send(send_mensage)
         elif( msg_id == 12):
             print("Recebi mensagem de status. A chamar interface do PIC")
-            if interface.action_valv(myjson['action']) :
+            print(str(myjson['action']))
+            if interface.action_valv(str(myjson['action'])) :
                 send_mensage = '{"reply_id": "12","status":"Success. Depois aparece aqui o status"}'
             else:
                 send_mensage = '{"reply_id": "12", "error":"-1","status":"ERROR. Couldn\'t get status"}'
