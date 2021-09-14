@@ -114,7 +114,7 @@ def Send_Config_to_Pid(myjson):
     print("Recebi mensagem de configurestart. A tentar configurar pic")
     actual_config, config_feita_correcta = interface.do_config(myjson)
     if config_feita_correcta :   #se config feita igual a pedida? (opcional?)
-        data_thread = threading.Thread(target=send_exp_data,args=(lock),daemon=True)
+        data_thread = threading.Thread(target=send_exp_data,args=(lock,),daemon=True)
         print("PIC configurado.\n")
         if interface.do_start():                            #tentar começar experiencia
             print("aqui")
@@ -129,6 +129,27 @@ def Send_Config_to_Pid(myjson):
     else:
         send_mensage = '{"reply_id": "2", "error":"-2", "status":"Experiment could not be configured"}'
     return send_mensage
+
+# def Send_Action_to_Valv(myjson):
+#     # global lock
+#     print("Recebi mensagem de configurestart. A tentar configurar pic")
+#     actual_config, config_feita_correcta = interface.do_config(myjson)
+#     if config_feita_correcta :   #se config feita igual a pedida? (opcional?)
+#         data_thread = threading.Thread(target=send_exp_data,args=(lock,),daemon=True)
+#         print("PIC configurado.\n")
+#         if interface.do_start():                            #tentar começar experiencia
+#             print("aqui")
+#             data_thread.start()
+#             lock.acquire()
+#             #O JSON dos config parameters está mal e crasha o server. ARRANJAR
+#             #send_mensage = '{"reply_id": "2","status":"Experiment Running","config_params":"'+str(myjson["config_params"])+'}'
+#             send_mensage = '{"reply_id": "2","status":"Experiment Running"}'
+#         else :
+#             send_mensage = '{"reply_id": "2", "error":"-1", "status":"Experiment could not start"}'
+    
+#     else:
+#         send_mensage = '{"reply_id": "2", "error":"-2", "status":"Experiment could not be configured"}'
+#     return send_mensage
 
 
 def check_msg(myjson):
@@ -192,6 +213,13 @@ def check_msg(myjson):
                 send_mensage = '{"reply_id": "5","status":"Success. Depois aparece aqui o status"}'
             else:
                 send_mensage = '{"reply_id": "5", "error":"-1","status":"ERROR. Couldn\'t get status"}'
+            send(send_mensage)
+        elif( msg_id == 12):
+            print("Recebi mensagem de status. A chamar interface do PIC")
+            if interface.action_valv(myjson['action']) :
+                send_mensage = '{"reply_id": "12","status":"Success. Depois aparece aqui o status"}'
+            else:
+                send_mensage = '{"reply_id": "12", "error":"-1","status":"ERROR. Couldn\'t get status"}'
             send(send_mensage)
         else:
             pass

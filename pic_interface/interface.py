@@ -156,7 +156,22 @@ def do_start() :
         #    return False
         #Aqui não pode ter else: false senão rebenta por tudo e por nada
         #tem de se apontar aos casos especificos -_-
+
+def action_valv(json):
+    global serial_port
+    global port
+    global baud
+    global desth_timeout
+    if serial_port.is_open :
+        pass
+    else:
+        serial_port = serial.Serial(port = port,\
+                                    baudrate=baud,\
+                                    timeout = desth_timeout)
     
+    serial_port.write(json)
+    
+    return True
 
 def do_stop() :
     global serial_port
