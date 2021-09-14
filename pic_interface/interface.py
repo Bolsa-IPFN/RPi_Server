@@ -39,7 +39,7 @@ def receive_data_from_exp():
             # try:
             serial_port.reset_input_buffer()
             pic_message = serial_port.readline()    
-            json.loads(pic_message)
+            pic_message = json.loads(pic_message)
             dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
             pic_message["sample"] = str(dt_string)
             pic_message = pic_message.decode(encoding='ascii')
