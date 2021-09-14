@@ -36,20 +36,20 @@ def receive_data_from_exp():
         return "DATA_END"
     else:
         while True:
-            # try:
-            serial_port.reset_input_buffer()
-            pic_message = serial_port.readline()    
-            pic_message = json.loads(pic_message)
-            dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-            pic_message["sample"] = str(dt_string)
-            pic_message = pic_message.decode(encoding='ascii')
-            print("MENSAGEM DO Arduino:\n")
-            print(pic_message)
-            print("\-------- --------/\n")
-            break
-            # except:
-            #     print("Ponto deu erro no JSON!!!")
-            #     pass
+            try:
+                serial_port.reset_input_buffer()
+                pic_message = serial_port.readline()    
+                pic_message = json.loads(pic_message)
+                dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+                pic_message["sample"] = str(dt_string)
+                # pic_message = pic_message.decode(encoding='ascii')
+                print("MENSAGEM DO Arduino:\n")
+                print(pic_message)
+                print("\-------- --------/\n")
+                break
+            except:
+                print("Ponto deu erro no JSON!!!")
+                pass
     return pic_message
 
     
