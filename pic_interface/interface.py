@@ -42,6 +42,7 @@ def receive_data_from_exp():
                 pic_message = json.loads(pic_message)
                 dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
                 pic_message["sample"] = str(dt_string)
+                pic_message = json.dumps(pic_message)
                 # pic_message = pic_message.decode(encoding='ascii')
                 print("MENSAGEM DO Arduino:\n")
                 print(pic_message)
