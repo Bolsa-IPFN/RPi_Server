@@ -1,6 +1,7 @@
 import serial
 import json
 import re
+from datetime import datetime
 
 
 serial_port = None
@@ -39,6 +40,8 @@ def receive_data_from_exp():
                 serial_port.reset_input_buffer()
                 pic_message = serial_port.readline()    
                 json.loads(pic_message)
+                dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+                pic_message["sample"] = str(dt_string)
                 pic_message = pic_message.decode(encoding='ascii')
                 print("MENSAGEM DO Arduino:\n")
                 print(pic_message)
